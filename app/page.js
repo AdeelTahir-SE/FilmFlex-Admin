@@ -7,7 +7,7 @@ export default function Register() {
   
         <div className="bg-black p-8 rounded-lg shadow-lg max-w-md w-full opacity-80">
           <h2 className="text-3xl font-bold text-red-500 mb-6 text-center">Register</h2>
-          <form className="space-y-6">
+          <form className="space-y-6" action="/api/register">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-300">
                 Name
@@ -50,7 +50,7 @@ export default function Register() {
           </form>
           <div className="mt-6 text-center">
             <p className="text-gray-300">
-              Already have an account?{' '}
+              Already have an account?
               <a href="/Signin" className="font-medium text-red-500 hover:text-red-400">
                 Sign In
               </a>

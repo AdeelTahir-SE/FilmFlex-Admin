@@ -1,13 +1,5 @@
 import connection from "./connectDB";
-export async function createAdmin(name, email, password, status) {
-  const [rows] = await connection.execute("INSERT INTO Admin VALUES(?,?,?,?)", [
-    name,
-    email,
-    password,
-    status,
-  ]);
-  return rows;
-}
+
  export async function createAdmin(name, email, password, status) {
   const [rows] = await connection.execute("INSERT INTO Admin VALUES(?,?,?,?)", [
     name,

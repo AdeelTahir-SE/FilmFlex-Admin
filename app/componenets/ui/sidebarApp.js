@@ -14,7 +14,7 @@ export  function SidebarApp({children}) {
     const links = [
         {
           label: "Dashboard",
-          href: "/admin/dashboard",
+          href: "/Dashboard",
           icon: (
             <li className="hover:bg-slate-600 hover:cursor-pointer">
               <LayoutDashboardIcon />
@@ -23,7 +23,7 @@ export  function SidebarApp({children}) {
         },
         {
           label: "Movies",
-          href: "/admin/movies",
+          href: "/Movies",
           icon: (
             <li className="hover:bg-slate-600 hover:cursor-pointer">
               <Film />
@@ -41,7 +41,7 @@ export  function SidebarApp({children}) {
         },
         {
           label: "Users",
-          href: "/admin/users",
+          href: "/Users",
           icon: (
             <li className="hover:bg-slate-600 hover:cursor-pointer">
               <UserIcon />
@@ -50,7 +50,7 @@ export  function SidebarApp({children}) {
         },
         {
           label: "Notifications",
-          href: "/admin/notifications",
+          href: "/Notifications",
           icon: (
             <li className="hover:bg-slate-600 hover:cursor-pointer">
               <Bell />
@@ -59,7 +59,7 @@ export  function SidebarApp({children}) {
         },
         {
           label: "Settings",
-          href: "/admin/settings",
+          href: "/Settings",
           icon: (
             <li className="hover:bg-slate-600 hover:cursor-pointer">
               <Settings />
