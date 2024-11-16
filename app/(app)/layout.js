@@ -5,7 +5,9 @@ export default function Layout({ children }) {
     <>
     <SidebarApp>
       <main>{children}</main>
-      </SidebarApp>
+
+    </SidebarApp>
+    
     </>
   )
 }

@@ -11,7 +11,7 @@ export async function getAllNotifications(email) {
     return rows;
 }
 
-export async function deleteNotification(title,email) {
-    const [rows] = await connection.execute("DELETE FROM NotificationAdmin WHERE title=? AND email=?", [title,email]);
+export async function deleteNotification(id,email) {
+    const [rows] = await connection.execute("DELETE FROM NotificationAdmin WHERE title=? AND id=?", [title,id]);
     return rows;
 }

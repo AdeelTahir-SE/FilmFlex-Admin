@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function AdminFooter() {
   return (
-    <footer className="bg-gray-950 p-6 text-white pt-3">
+    <footer className="bg-gray-950 p-6 text-white pt-3 bottom-0 relative ">
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
         <div>
           <h2 className="text-xl font-bold mb-4 text-red-700">Admin Panel</h2>

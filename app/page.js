@@ -1,5 +1,34 @@
+"use client"
 import { BackgroundBeamsWithCollision } from "./componenets/ui/background_beams";
 import { Sidebar } from "./componenets/ui/sidebar";
+import { useState,useEffect } from "react";
+
+const handleSubmit = async (e) => {
+  event.preventDefault();
+console.log(e.target.elements.name.value);
+console.log(e.target.elements.email.value);
+console.log(e.target.elements.password.value);
+
+  const formData = new FormData();
+  formData.append('name', e.target.elements.name.value);
+  formData.append('email',e.target.elements.email.value);
+  formData.append('password', e.target.elements.password.value);
+    try {
+    const response = await fetch('/api/register', {
+      method: 'POST',
+      body: formData, 
+    });
+    const data = await response.json();
+    console.log(data);
+    if (response.ok) {
+      window.location.href = '/Dashboard';
+    } else {
+      const errorData = await response.json();
+      }
+  } catch (err) {
+    console.error('Error:', err);
+  }
+};
 export default function Register() {
   return (
     <Sidebar>   <BackgroundBeamsWithCollision >
@@ -7,7 +36,7 @@ export default function Register() {
   
         <div className="bg-black p-8 rounded-lg shadow-lg max-w-md w-full opacity-80">
           <h2 className="text-3xl font-bold text-red-500 mb-6 text-center">Register</h2>
-          <form className="space-y-6" action="/api/register">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-300">
                 Name

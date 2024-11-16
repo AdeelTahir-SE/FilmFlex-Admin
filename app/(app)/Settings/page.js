@@ -13,20 +13,14 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Separator } from "@/components/ui/separator";
 import { Bell, User, Shield } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
 export default function SettingsPage() {
   return (
-    <section className="min-h-full bg-black">
+    <section className="min-h-screen bg-black">
       <div className="container max-w-6xl mx-auto py-10 w-2/3 m-auto space-y-8 min-h-full text-white">
         <header className="space-y-2">
           <h1 className="text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-b from-red-500 via-red-700 to-black">
