@@ -1,8 +1,9 @@
 import { BackgroundBeamsWithCollision } from "./componenets/ui/background_beams";
+import { Sidebar } from "./componenets/ui/sidebar";
 export default function Register() {
   return (
-    <BackgroundBeamsWithCollision >
-        <div className="min-h-screen min-w-full flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-red-900 overflow-hidden">
+    <Sidebar>   <BackgroundBeamsWithCollision >
+        <div className="min-h-screen min-w-full flex items-center justify-center p-0 m-0  bg-gradient-to-br from-black via-gray-900 to-red-900 overflow-hidden">
   
         <div className="bg-black p-8 rounded-lg shadow-lg max-w-md w-full opacity-80">
           <h2 className="text-3xl font-bold text-red-500 mb-6 text-center">Register</h2>
@@ -58,6 +59,8 @@ export default function Register() {
         </div>
     </div>
     </BackgroundBeamsWithCollision>
+    </Sidebar>
+ 
   
   );
 }
