@@ -9,7 +9,7 @@ export default function NotificationCard({
     onClose,
 }) {
     return (
-        <div className="mb-4 bg-gradient-to-r bg-slate-900 rounded-lg flex flex-row items-center  pl-0 ml-0">
+        <div className="mb-4 bg-gradient-to-r bg-slate-800 rounded-lg flex flex-row items-center  pl-0 ml-0">
             {image&&<Image src={image} className="w-36 object-cover " alt={title} />}
             <div className="flex flex-col gap-2 mx-7 p-3">
                 <h1 className="text-2xl text-white font-bold">{title}</h1>
