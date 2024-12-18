@@ -34,16 +34,22 @@ export default function MovieForm() {
     setSuccessMessage(null);
 
     try {
-      const response = await fetch("/api/movies", {
+      // Convert premiumSeats array to a string before sending
+      const premiumSeats = formData.premiumSeats.join(', ');
+  
+      const response = await fetch("/api/Movies", {
         method: "POST",
-        body: new URLSearchParams(formData),
+        body: new URLSearchParams({
+          ...formData,
+          premiumSeats, // Add premiumSeats as a string
+        }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to submit form");
       }
-
+  
       setSuccessMessage("Movie submitted successfully!");
       setFormData({
         title: "",
@@ -64,8 +70,8 @@ export default function MovieForm() {
 
   return (
     <div className="min-h-screen bg-black text-white p-8">
-          <h1 className="text-6xl font-bold text-center mb-4 text-transparent bg-clip-text bg-gradient-to-b from-red-500 via-red-700 to-black">
-          Add a New Movie</h1>
+      <h1 className="text-6xl font-bold text-center mb-4 text-transparent bg-clip-text bg-gradient-to-b from-red-500 via-red-700 to-black">
+        Add a New Movie</h1>
 
       {error && (
         <p className="mb-4 text-red-500 text-center p-2 bg-red-900 border border-red-700 rounded">
