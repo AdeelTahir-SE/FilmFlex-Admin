@@ -16,7 +16,7 @@ const connection = await mysql.createConnection({
 
 
 // Create tables
-await connection.execute("CREATE TABLE IF NOT EXISTS admin( name VARCHAR(255), email VARCHAR(255) PRIMARY KEY, password VARCHAR(255), status VARCHAR(255) DEFAULT 'Manager')");
+// await connection.execute("CREATE TABLE IF NOT EXISTS admin( name VARCHAR(255), email VARCHAR(255) PRIMARY KEY, password VARCHAR(255), status VARCHAR(255) DEFAULT 'Manager')");
 await connection.execute(`
     CREATE TABLE IF NOT EXISTS Movies (
       id INT AUTO_INCREMENT PRIMARY KEY,
