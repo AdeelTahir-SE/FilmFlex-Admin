@@ -67,7 +67,7 @@ export default function SettingsPage() {
     setSuccess("");
 
     try {
-      const response = await fetch("/api/Settings/Passwd", {
+      const response = await fetch("/api/update-profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
