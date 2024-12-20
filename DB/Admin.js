@@ -22,3 +22,32 @@ export async function getAdminByEmail(email,password) {
     return rows;
 }
 
+export async function changeEmailOfAdmin(name, email) {
+  try {
+    const [result] = await connection.execute(
+      "UPDATE Admin SET email = ? WHERE name = ?", 
+      [email, name]
+    );
+
+    // Check if any rows were affected
+    if (result.affectedRows === 0) {
+      console.log("No admin found with the given name.");
+      return false;  // No rows were updated
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error updating admin email:", error);
+    return false;
+  }
+}
+export async function changeAdminPassword(current_Password,new_Password){
+  const [result]= await connection.execute(
+  "UPDATE Admin SET password=? WHERE password=?",[new_Password,current_Password]);
+  if(result.affectedRows===0)
+  {
+    console.log("Your password is incorrect");
+    return false;
+  }
+  return true;
+}
