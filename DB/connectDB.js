@@ -53,15 +53,16 @@ const createTables = async () => {
 
     // MovieTimings table (with unique constraint to prevent duplicate timings for the same movie and day)
     await connection.execute(`
-            CREATE TABLE IF NOT EXISTS MovieTimings (
-                timingId INT AUTO_INCREMENT PRIMARY KEY,
-                movieId INT NOT NULL,
-                duration INT NOT NULL,
-                timings TIME NOT NULL,
-                day ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday') NOT NULL,
-                UNIQUE (movieId, day, timings),  -- Prevent duplicate timings for the same movie and day
-                FOREIGN KEY (movieId) REFERENCES Movie(movieId) ON DELETE CASCADE
-            );
+          CREATE TABLE IF NOT EXISTS MovieTimings (
+    timingId INT AUTO_INCREMENT PRIMARY KEY,
+    movieId INT NOT NULL,
+    duration INT NOT NULL,
+    timings TIME NOT NULL,
+    day ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday') NOT NULL,
+    UNIQUE (movieId, day, timings),  -- Unique constraint on movieId, day, and timings
+    FOREIGN KEY (movieId) REFERENCES Movie(movieId) ON DELETE CASCADE
+);
+
         `);
 
     // MoviePrices table

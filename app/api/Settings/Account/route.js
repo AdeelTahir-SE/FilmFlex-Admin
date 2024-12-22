@@ -7,13 +7,14 @@ export async function PUT(request) {
 
     // Parse the request body (name and email)
     const { name, email } = await request.json();
-
-    if (!name || !email) {
+    const admin = request.cookies.get("adminid");
+    const adminId=admin.value;
+console.log(name,email,adminId)
+    if (!name || !email || !adminId) {
       return new Response("Name and Email are required", { status: 400 });
     }
 
-    // Update the email of the admin in the database
-    const result = await changeEmailOfAdmin(name, email);
+    const result = await changeEmailOfAdmin(name, email.toString(),adminId);
 
     if (result) {
       return new Response(JSON.stringify({ message: "Profile updated successfully" }), {

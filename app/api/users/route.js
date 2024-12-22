@@ -4,7 +4,7 @@ import connection from "@/DB/connectDB";
 export async function GET(request) {
   try {
     // Query the database to fetch users
-    const [rows] = await connection.execute("SELECT * FROM users");
+    const [rows] = await connection.execute("SELECT * FROM User");
     return new Response(JSON.stringify(rows), {
       status: 200,
       headers: { "Content-Type": "application/json" },

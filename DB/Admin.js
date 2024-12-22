@@ -2,16 +2,16 @@ import connection from "./connectDB";
 import { hashPassword, verifyPassword } from "@/security/securityFunctions";
 
 // Change email of admin
-export async function changeEmailOfAdmin(name, email) {
+export async function changeEmailOfAdmin(name, email, adminId) {
   try {
     const [result] = await connection.execute(
-      "UPDATE Admin SET email = ? WHERE name = ?", 
-      [email, name]
+      "UPDATE Admin SET email = ?, name = ? WHERE adminId = ?",
+      [email, name, adminId]
     );
 
     // Check if any rows were affected
     if (result.affectedRows === 0) {
-      console.log("No admin found with the given name.");
+      console.log("No admin found with the given adminId.");
       return false;  // No rows were updated
     }
 
@@ -22,19 +22,54 @@ export async function changeEmailOfAdmin(name, email) {
   }
 }
 
+
 // Change admin password
-export async function changeAdminPassword(current_Password, new_Password) {
-  const [result] = await connection.execute(
-    "UPDATE Admin SET password = ? WHERE password = ?",
-    [await hashPassword(new_Password), await hashPassword(current_Password)]
-  );
-  
-  if (result.affectedRows === 0) {
-    console.log("Your password is incorrect");
+import bcrypt from 'bcryptjs'; // Assuming you're using bcrypt for password hashing
+
+export async function changeAdminPassword(current_Password, new_Password, adminId) {
+  try {
+    // Fetch the current hashed password from the database for the admin
+    const [admin] = await connection.execute(
+      "SELECT password FROM Admin WHERE adminId = ?",
+      [adminId]
+    );
+
+    if (admin.length === 0) {
+      console.log("Admin not found.");
+      return false;
+    }
+
+    const currentHashedPassword = admin[0].password;
+
+    // Compare the provided current password with the stored hashed password
+    const isMatch = await bcrypt.compare(current_Password, currentHashedPassword);
+
+    if (!isMatch) {
+      console.log("Your current password is incorrect.");
+      return false;
+    }
+
+    // Hash the new password
+    const hashedNewPassword = await bcrypt.hash(new_Password, 10);
+
+    // Update the password in the database
+    const [result] = await connection.execute(
+      "UPDATE Admin SET password = ? WHERE adminId = ?",
+      [hashedNewPassword, adminId]
+    );
+
+    if (result.affectedRows === 0) {
+      console.log("Failed to update password.");
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error changing password:", error);
     return false;
   }
-  return true;
 }
+
 
 // Create admin
 export async function createAdmin(name, email, password) {

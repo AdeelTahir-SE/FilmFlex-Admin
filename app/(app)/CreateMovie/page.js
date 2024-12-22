@@ -1,236 +1,337 @@
-"use client"
-import React, { useState } from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import { createMovieStructure } from "@/DB/connectFB";
 
 export default function CreateMovie() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [releaseDate, setReleaseDate] = useState("");
-  const [genre, setGenre] = useState("");
-  const [timings, setTimings] = useState(""); // Comma-separated timings
-  const [days, setDays] = useState(""); // Comma-separated days
-  const [seatCount, setSeatCount] = useState(10); // Default seat count
-  const [image, setImage] = useState(null); // Image file
-  const [trailerLink, setTrailerLink] = useState(""); // Trailer link
-  const [rating, setRating] = useState(""); // Movie rating
-  const [price, setPrice] = useState(""); // Ticket price
-  const [duration, setDuration] = useState(""); // Duration in minutes
+  const [formData, setFormData] = useState({
+    title: "asd",
+    description: "dsa",
+    genre: "asd,dsa,asd",
+    seatCount: 120,
+    image: null,
+    trailerLink: "https://youtu.be/R2hSkF4UrKs?si=QZnts_2tJb3R-PvT",
+    rating: "6",
+    price: "80",
+    duration: "90",
+    daysAndTimings: [{ day: "Monday", timing: "10:00:00" }],
+  });
+
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [isFormValid, setIsFormValid] = useState(false);
+  const [clicked, setclicked] = useState(false);
+  useEffect(() => {
+    // Validate the form: ensure rating is <= 5 and other fields are filled
+    const isValid =
+      formData.rating <= 5 &&
+      formData.title &&
+      formData.description &&
+      formData.genre &&
+      formData.seatCount &&
+      formData.image &&
+      formData.trailerLink &&
+      formData.price &&
+      formData.duration &&
+      formData.daysAndTimings.every((entry) => entry.day && entry.timing);
+
+    setIsFormValid(isValid);
+  }, [formData]);
+
+  const handleChange = (e) => {
+    const { name, value, files, dataset } = e.target;
+
+    if (name === "image") {
+      setFormData({ ...formData, [name]: files ? files[0] : value });
+    } else if (dataset.index !== undefined) {
+      const newDaysAndTimings = [...formData.daysAndTimings];
+      newDaysAndTimings[dataset.index] = {
+        ...newDaysAndTimings[dataset.index],
+        [name]: value,
+      };
+      setFormData({ ...formData, daysAndTimings: newDaysAndTimings });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleAddDayTime = () => {
+    setFormData({
+      ...formData,
+      daysAndTimings: [...formData.daysAndTimings, { day: "", timing: "" }],
+    });
+  };
+
+  const handleRemoveDayTime = (index) => {
+    const newDaysAndTimings = [...formData.daysAndTimings];
+    newDaysAndTimings.splice(index, 1);
+    setFormData({ ...formData, daysAndTimings: newDaysAndTimings });
+  };
 
   const handleSubmit = async (event) => {
+    setclicked(true);
     event.preventDefault();
+    setError(null);
+    setSuccessMessage(null);
+
+    const {
+      title,
+      description,
+      genre,
+      seatCount,
+      image,
+      trailerLink,
+      rating,
+      price,
+      duration,
+      daysAndTimings,
+    } = formData;
 
     if (!image) {
-      alert("Please upload an image.");
+      setError("Please upload an image.");
       return;
     }
 
-    // Create FormData object for multipart form submission
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("releaseDate", releaseDate);
-    formData.append("genre", genre);
-    formData.append("image", image); // Add image file
-    formData.append("trailerLink", trailerLink);
-    formData.append("rating", rating);
-    formData.append("price", price);
-    formData.append("duration", duration);
+    if (rating > 5) {
+      setError("Rating cannot be greater than 5.");
+      return;
+    }
+
+    if (daysAndTimings.some((entry) => !entry.day || !entry.timing)) {
+      setError("Please specify both day and time for each movie showing.");
+      return;
+    }
+
+    // Create FormData object
+    const form = new FormData();
+    form.append("title", title);
+    form.append("description", description);
+    form.append("genre", genre);
+    form.append("image", image);
+    form.append("trailerlink", trailerLink);
+    form.append("rating", rating);
+    form.append("price", price);
+    form.append("duration", duration);
+    form.append("seats", seatCount);
+
+    // Append days and timings in a format suitable for your backend
+    form.append("daysAndTimings", JSON.stringify(daysAndTimings));
 
     try {
-      const response = await fetch("/api/movies", {
+      const response = await fetch("/api/Movies", {
         method: "POST",
-        body: formData, // Send FormData directly
+        body: form,
       });
 
       if (response.ok) {
-        const data = await response.json(); // Assuming the response contains the movieId
-        const movieId = data.movieId;
+        const data = await response.json();
+        const movieId = data.movie.movieId;
 
-        const timingsArray = timings.split(",").map((time) => time.trim());
-        const daysArray = days.split(",").map((day) => day.trim());
-
-        // Loop through days and timings
-        for (const day of daysArray) {
-          for (const timing of timingsArray) {
-            for (let seatNumber = 1; seatNumber <= seatCount; seatNumber++) {
-              // Create movie structure for each seat
-              await createMovieStructure(movieId, day, timing, seatNumber, "available", null);
-            }
+        // Handle movie structure creation based on the submitted days and timings
+        for (const { day, timing } of daysAndTimings) {
+          for (let seatNumber = 1; seatNumber <= seatCount; seatNumber++) {
+            console.log("Creating movie structure for:", {
+              movieId,
+              day,
+              timing,
+              seatNumber,
+            });
+            await createMovieStructure(
+              movieId.toString(),
+              day.toString(),
+              timing.toString(),
+              seatNumber.toString(),
+              "available",
+              null
+            );
           }
         }
 
-        alert("Movie and seats database created successfully!");
+        setSuccessMessage("Movie created successfully!");
 
-        // Reset form fields
-        setTitle("");
-        setDescription("");
-        setReleaseDate("");
-        setGenre("");
-        setTimings("");
-        setDays("");
-        setSeatCount(10);
-        setImage(null);
-        setTrailerLink("");
-        setRating("");
-        setPrice("");
-        setDuration("");
+        // Reset form after successful submission
+        setFormData({
+          title: "",
+          description: "",
+          genre: "",
+          seatCount: 10,
+          image: null,
+          trailerLink: "",
+          rating: "",
+          price: "",
+          duration: "",
+          daysAndTimings: [{ day: "", timing: "" }],
+        });
       } else {
-        alert("Failed to create movie.");
+        setError("Failed to create movie.");
       }
     } catch (error) {
       console.error("Error creating movie and seats database:", error);
-      alert("An error occurred while creating the movie.");
+      setError("An error occurred while creating the movie.");
+    } finally {
+      setclicked(false);
     }
   };
 
   return (
-    <section className="flex flex-col p-4 bg-black text-white min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-red-600">Create Movie</h1>
-      <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
-        <label className="flex flex-col">
-          Movie Title:
-          <input
-            type="text"
-            name="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="border border-red-600 p-2 bg-black text-white"
-          />
-        </label>
-        <label className="flex flex-col">
-          Description:
-          <textarea
-            name="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-            className="border border-red-600 p-2 bg-black text-white"
-          />
-        </label>
-        <label className="flex flex-col">
-          Release Date:
-          <input
-            type="date"
-            name="releaseDate"
-            value={releaseDate}
-            onChange={(e) => setReleaseDate(e.target.value)}
-            required
-            className="border border-red-600 p-2 bg-black text-white"
-          />
-        </label>
-        <label className="flex flex-col">
-          Genre:
-          <input
-            type="text"
-            name="genre"
-            value={genre}
-            onChange={(e) => setGenre(e.target.value)}
-            required
-            className="border border-red-600 p-2 bg-black text-white"
-          />
-        </label>
-        <label className="flex flex-col">
-          Upload Image:
+    <div className="min-h-screen bg-black text-white p-8">
+      <h1 className="text-6xl font-bold text-center mb-4 text-transparent bg-clip-text bg-gradient-to-b from-red-500 via-red-700 to-black">
+        Add a New Movie
+      </h1>
+
+      {error && (
+        <p className="mb-4 text-red-500 text-center p-2 bg-red-900 border border-red-700 rounded">
+          {error}
+        </p>
+      )}
+      {successMessage && (
+        <p className="mb-4 text-green-500 text-center p-2 bg-green-900 border border-green-700 rounded">
+          {successMessage}
+        </p>
+      )}
+
+      <form
+        onSubmit={handleSubmit}
+        className="max-w-3xl mx-auto bg-gray-900 p-8 rounded-lg shadow-lg space-y-6"
+      >
+        {Object.keys(formData).map((key) => {
+          if (key === "daysAndTimings") return null;
+
+          return (
+            key !== "image" && (
+              <div key={key} className="flex flex-col space-y-2">
+                <label
+                  className="text-lg font-semibold text-gray-300"
+                  htmlFor={key}
+                >
+                  {key.replace(/([A-Z])/g, " $1").toUpperCase()}:
+                </label>
+                <input
+                  type={
+                    key === "seatCount" ||
+                    key === "rating" ||
+                    key === "price" ||
+                    key === "duration"
+                      ? "number"
+                      : "text"
+                  }
+                  name={key}
+                  id={key}
+                  value={formData[key]}
+                  onChange={handleChange}
+                  required={key !== "image"}
+                  className="w-full p-4 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-600 transition duration-200"
+                />
+                <small className="text-gray-400">
+                  {key === "timings"
+                    ? "Enter timings as a comma-separated list (e.g., 18:00:00, 23:00:00)."
+                    : key === "days"
+                    ? "Enter days as a comma-separated list (e.g., Monday, Tuesday)."
+                    : `Enter the movie's ${key
+                        .replace(/([A-Z])/g, " $1")
+                        .toLowerCase()}.`}
+                </small>
+              </div>
+            )
+          );
+        })}
+
+        <div className="space-y-4">
+          {formData.daysAndTimings.map((entry, index) => (
+            <div key={index} className="flex space-x-4">
+              <div className="flex-1">
+                <label
+                  className="text-lg font-semibold text-gray-300"
+                  htmlFor={`day-${index}`}
+                >
+                  Day:
+                </label>
+                <input
+                  type="text"
+                  name="day"
+                  value={entry.day}
+                  onChange={handleChange}
+                  data-index={index}
+                  id={`day-${index}`}
+                  className="w-full p-4 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-600 transition duration-200"
+                />
+              </div>
+              <div className="flex-1">
+                <label
+                  className="text-lg font-semibold text-gray-300"
+                  htmlFor={`timing-${index}`}
+                >
+                  Timing:
+                </label>
+                <input
+                  type="text"
+                  name="timing"
+                  value={entry.timing}
+                  onChange={handleChange}
+                  data-index={index}
+                  id={`timing-${index}`}
+                  className="w-full p-4 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-600 transition duration-200"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => handleRemoveDayTime(index)}
+                className="text-red-500 p-4 bg-red-800 rounded-lg hover:bg-red-700 transition duration-200"
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+
+          <button
+            type="button"
+            onClick={handleAddDayTime}
+            className="w-full p-4 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105"
+          >
+            Add Day and Timing
+          </button>
+        </div>
+
+        <div className="flex flex-col space-y-2">
+          <label
+            className="text-lg font-semibold text-gray-300"
+            htmlFor="image"
+          >
+            UPLOAD IMAGE:
+          </label>
           <input
             type="file"
             name="image"
+            id="image"
             accept="image/*"
-            onChange={(e) => setImage(e.target.files[0])}
+            onChange={handleChange}
             required
-            className="border border-red-600 p-2 bg-black text-white"
+            className="w-full p-4 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-red-600 transition duration-200"
           />
-        </label>
-        <label className="flex flex-col">
-          Trailer Link:
-          <input
-            type="url"
-            name="trailerLink"
-            value={trailerLink}
-            onChange={(e) => setTrailerLink(e.target.value)}
-            required
-            className="border border-red-600 p-2 bg-black text-white"
-          />
-        </label>
-        <label className="flex flex-col">
-          Movie Rating (out of 10):
-          <input
-            type="number"
-            name="rating"
-            value={rating}
-            onChange={(e) => setRating(parseFloat(e.target.value))}
-            required
-            min="0"
-            max="10"
-            step="0.1"
-            className="border border-red-600 p-2 bg-black text-white"
-          />
-        </label>
-        <label className="flex flex-col">
-          Ticket Price:
-          <input
-            type="number"
-            name="price"
-            value={price}
-            onChange={(e) => setPrice(parseFloat(e.target.value))}
-            required
-            min="0"
-            step="0.01"
-            className="border border-red-600 p-2 bg-black text-white"
-          />
-        </label>
-        <label className="flex flex-col">
-          Duration (in minutes):
-          <input
-            type="number"
-            name="duration"
-            value={duration}
-            onChange={(e) => setDuration(parseInt(e.target.value, 10))}
-            required
-            min="1"
-            className="border border-red-600 p-2 bg-black text-white"
-          />
-        </label>
-        <label className="flex flex-col">
-          Timings (comma-separated):
-          <input
-            type="text"
-            name="timings"
-            value={timings}
-            onChange={(e) => setTimings(e.target.value)}
-            required
-            placeholder="e.g., 10:00 AM, 1:00 PM, 4:00 PM"
-            className="border border-red-600 p-2 bg-black text-white"
-          />
-        </label>
-        <label className="flex flex-col">
-          Days (comma-separated):
-          <input
-            type="text"
-            name="days"
-            value={days}
-            onChange={(e) => setDays(e.target.value)}
-            required
-            placeholder="e.g., 2024-12-21, 2024-12-22"
-            className="border border-red-600 p-2 bg-black text-white"
-          />
-        </label>
-        <label className="flex flex-col">
-          Number of Seats:
-          <input
-            type="number"
-            name="seatCount"
-            value={seatCount}
-            onChange={(e) => setSeatCount(parseInt(e.target.value, 10))}
-            required
-            min="1"
-            className="border border-red-600 p-2 bg-black text-white"
-          />
-        </label>
-        <button type="submit" className="bg-red-600 text-white p-2 rounded hover:bg-red-700">
-          Create Movie
-        </button>
+          <small className="text-gray-400">
+            Upload a cover image for the movie.
+          </small>
+        </div>
+
+        {!clicked ? (
+          <button
+            type="submit"
+            disabled={!isFormValid}
+            className="w-full p-4 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition duration-300 transform hover:scale-105"
+          >
+            Submit
+          </button>
+        ) : (
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-red-500"></div>
+          </div>
+        )}
+        {!isFormValid && (
+          <small className="text-red-500 text-center">
+            Please fill all required fields and ensure the rating is less than
+            or equal to 5.
+          </small>
+        )}
       </form>
-    </section>
+    </div>
   );
 }

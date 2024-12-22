@@ -67,7 +67,7 @@ export default function SettingsPage() {
     setSuccess("");
 
     try {
-      const response = await fetch("/api/update-profile", {
+      const response = await fetch("/api/Settings/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -77,6 +77,9 @@ export default function SettingsPage() {
 
       if (response.ok) {
         const data = await response.json();
+        setConfirmPassword("");
+        setCurrentPassword("");
+        setNewPassword("");
         setSuccess(data.message);
       } else {
         const errorData = await response.json();
@@ -106,10 +109,7 @@ export default function SettingsPage() {
               <User className="h-4 w-4 mr-2" />
               Account
             </TabsTrigger>
-            <TabsTrigger value="notifications" className="text-white">
-              <Bell className="h-4 w-4 mr-2" />
-              Notifications
-            </TabsTrigger>
+           
             <TabsTrigger value="security" className="text-white">
               <Shield className="h-4 w-4 mr-2" />
               Security
@@ -170,38 +170,7 @@ export default function SettingsPage() {
             </Card>
           </TabsContent>
 
-          {/* Notifications Tab */}
-          <TabsContent value="notifications">
-            <Card className="bg-black text-white">
-              <CardHeader>
-                <CardTitle className="text-white">Notification Preferences</CardTitle>
-                <CardDescription className="text-gray-400">
-                  Choose your notification settings.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label className="text-gray-300">Email Notifications</Label>
-                      <p className="text-sm text-gray-400">Receive updates via email.</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label className="text-gray-300">Browser Notifications</Label>
-                      <p className="text-sm text-gray-400">Get notified in your browser.</p>
-                    </div>
-                    <Switch />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Security Tab */}
+          
           <TabsContent value="security">
             <Card className="bg-black text-white">
               <CardHeader>
@@ -212,10 +181,7 @@ export default function SettingsPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-gray-300">Two-Factor Authentication</Label>
-                    <Switch />
-                  </div>
+                 
                   <Separator />
                   <div>
                     <Label className="text-gray-300">Change Password</Label>

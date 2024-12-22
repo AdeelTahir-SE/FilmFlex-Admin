@@ -18,7 +18,7 @@ export async function createMovieImage(movieId, imageUrl) {
   `;
   const values = [movieId, imageUrl];
 
-  await pool.execute(query, values);
+  await connection.execute(query, values);
 }
 
 export async function createMovieGenre(movieId, genre) {
@@ -28,7 +28,7 @@ export async function createMovieGenre(movieId, genre) {
   `;
   const values = [movieId, genre];
 
-  await pool.execute(query, values);
+  await connection.execute(query, values);
 }
 
 export async function createMovieTiming(movieId, duration, timings, day) {
@@ -38,7 +38,7 @@ export async function createMovieTiming(movieId, duration, timings, day) {
   `;
   const values = [movieId, duration, timings, day];
 
-  await pool.execute(query, values);
+  await connection.execute(query, values);
 }
 
 
@@ -49,5 +49,23 @@ export async function createMoviePrice(movieId, price) {
   `;
   const values = [movieId, price];
 
-  await pool.execute(query, values);
+  await connection.execute(query, values);
+}
+
+export async function getMovies() {
+  const query = `
+SELECT * FROM Movie INNER JOIN MovieImage ON Movie.movieId=MovieImage.movieId;
+  `;
+
+  const [rows] = await connection.execute(query);
+  return rows;
+}
+export async function deleteMovie(movieId){
+  const query = `
+      DELETE FROM movie WHERE movieId = ?
+  `;
+  const values = [movieId];
+
+  const [result] = await connection.execute(query, values);
+  return result.affectedRows > 0;
 }

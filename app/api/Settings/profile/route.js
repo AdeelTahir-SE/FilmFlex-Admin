@@ -7,13 +7,14 @@ export async function PUT(request) {
 
     // Parse the request body (name and email)
     const { currentPassword,newPassword } = await request.json();
-
+    const admin = request.cookies.get("adminid");
+    const adminId=admin.value;
     if (!currentPassword|| !newPassword) {
       return new Response("password must ne entered are required", { status: 400 });
     }
 
     // Update the email of the admin in the database
-    const result = await changeAdminPassword(currentPassword, newPassword);
+    const result = await changeAdminPassword(currentPassword, newPassword,adminId);
 
     if (result) {
       return new Response(JSON.stringify({ message: "Profile updated successfully" }), {

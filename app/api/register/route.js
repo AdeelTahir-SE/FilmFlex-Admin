@@ -16,7 +16,7 @@ export async function POST(request) {
     const { success, data } = await createAdmin(name, email, password);
     if (success) {
       const response = NextResponse.json({ message: "Admin created." }, { status: 201 });
-      response.cookies.set("adminid", data.adminId, {
+      response.cookies.set("adminid", data, {
         httpOnly: false,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",

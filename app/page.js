@@ -51,6 +51,7 @@ export default function RegisterSignIn() {
   }
 
   return (
+    
     <BackgroundBeamsWithCollision>
       <div className="min-h-screen min-w-full flex items-center justify-center p-0 m-0 bg-gradient-to-br from-black via-gray-900 to-red-900 overflow-hidden">
         <div className="bg-black p-8 rounded-lg shadow-lg max-w-md w-full opacity-80">

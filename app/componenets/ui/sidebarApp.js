@@ -1,13 +1,14 @@
 "use client";
 import React, { useState } from "react";
-
+//import reserve related icon from lucide-react
+import { TicketCheck } from "lucide-react";
 import { Sidebar, SidebarBody, SidebarLink } from "./sidebar";
 import {
   LayoutDashboardIcon,
   Settings,
   UserIcon,
   Film,
-  Bell,
+  
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +18,7 @@ export function SidebarApp({ children }) {
     { label: "Movies", href: "/Movies", icon: <Film /> },
     { label: "Users", href: "/Users", icon: <UserIcon /> },
     { label: "Settings", href: "/Settings", icon: <Settings /> },
+    { label: "Reservations", href: "/ReservedMovies", icon: <TicketCheck /> },
   ];
 
   const [open, setOpen] = useState(false);
