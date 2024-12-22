@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import PieGraph from "../Componenets/PieGraph";
-import BarGraph from "../Componenets/BarGraph";
 import LineGraph from "../Componenets/LineChart";
 import { Spotlight } from "../Componenets/Spotlight";
 
@@ -17,10 +16,6 @@ export default function Dashboard() {
       { title: "Avengers: Endgame", reservations: 300 },
       { title: "Inception", reservations: 250 },
       { title: "Interstellar", reservations: 200 },
-    ],
-    topTheaters: [
-      { theater: "Theater 1", location: "Downtown", reservations: 400 },
-      { theater: "Theater 2", location: "Uptown", reservations: 300 },
     ],
     averageSeatUtilization: "85%",
     mostPopularDays: [
@@ -65,15 +60,6 @@ export default function Dashboard() {
             <p><b>Avg Seat Utilization:</b> {data.averageSeatUtilization}</p>
           </section>
 
-          {/* Revenue Overview */}
-          <section className="flex-1 min-w-[300px] border-2 border-gray-700 rounded p-4">
-            <h2 className="text-2xl font-bold mb-4">Revenue Insights</h2>
-            <PieGraph chartTitle="Revenue Breakdown" chartDescription="Tickets vs. Concessions" />
-            <p><b>Total Revenue:</b> {data.totalRevenue}</p>
-            <p><b>Tickets:</b> {data.revenueFromTickets}</p>
-            <p><b>Concessions:</b> {data.revenueFromConcessions}</p>
-          </section>
-
           {/* Top Performing Movies */}
           <section className="flex-1 min-w-[300px] border-2 border-gray-700 rounded p-4">
             <h2 className="text-2xl font-bold mb-4">Top Performing Movies</h2>
@@ -81,19 +67,6 @@ export default function Dashboard() {
               {data.topMovies.map((movie, index) => (
                 <li key={index}>
                   <p><b>{movie.title}:</b> {movie.reservations} reservations</p>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          {/* Top Theaters */}
-          <section className="flex-1 min-w-[300px] border-2 border-gray-700 rounded p-4">
-            <h2 className="text-2xl font-bold mb-4">Top Performing Theaters</h2>
-            <BarGraph chartTitle="Theater Performance" chartDescription="Reservations by theater" />
-            <ul>
-              {data.topTheaters.map((theater, index) => (
-                <li key={index}>
-                  <p><b>{theater.theater} ({theater.location}):</b> {theater.reservations} reservations</p>
                 </li>
               ))}
             </ul>

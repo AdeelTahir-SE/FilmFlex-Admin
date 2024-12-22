@@ -1,20 +1,35 @@
 "use client";
 import React, { useState } from "react";
+
 import { Sidebar, SidebarBody, SidebarLink } from "./sidebar";
-import { LayoutDashboardIcon, Settings, UserIcon, Film, TicketIcon, Bell } from "lucide-react";
+import {
+  LayoutDashboardIcon,
+  Settings,
+  UserIcon,
+  Film,
+  Bell,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function SidebarApp({ children }) {
   const links = [
     { label: "Dashboard", href: "/Dashboard", icon: <LayoutDashboardIcon /> },
     { label: "Movies", href: "/Movies", icon: <Film /> },
-    { label: "Reservations", href: "/Reservations", icon: <TicketIcon /> },
     { label: "Users", href: "/Users", icon: <UserIcon /> },
-    { label: "Notifications", href: "/Notifications", icon: <Bell /> },
     { label: "Settings", href: "/Settings", icon: <Settings /> },
   ];
 
   const [open, setOpen] = useState(false);
+  function deleteCookies() {
+    // Set the cookies to expire in the past
+    document.cookie = "adminid=; max-age=0; path=/;";
+  }
+  
+  // Sign-out handler
+  const handleSignOut = async () => {
+    deleteCookies();
+    window.location.href = "/"; // Redirect to login or home page
+  };
 
   return (
     <div
@@ -28,35 +43,57 @@ export function SidebarApp({ children }) {
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar">
             <div className="mt-8 flex flex-col gap-2">
               {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} className="list-none invert font-bold" />
+                <SidebarLink
+                  key={idx}
+                  link={link}
+                  className="list-none invert font-bold"
+                />
               ))}
+             
             </div>
 
             {/* Footer Content - Subscriptions and Description */}
-            {open&&<div className="mt-8 p-4 border-t border-gray-700 text-gray-400">
-              <h2 className="text-xl font-bold mb-4 text-red-700">Admin Panel</h2>
-              <p className="mb-4">
-                Manage your platform efficiently with access to all administrative tools and resources.
-              </p>
-
-              <h2 className="text-xl font-bold mb-4 text-red-700">Subscribe for Alerts</h2>
-              <form className="flex flex-col space-y-2">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  id="admin-email"
-                  className="p-2 rounded bg-gray-700 text-white"
-                  required
-                />
+            {open && (
+              <div className="mt-8 p-4 border-t border-gray-700 text-gray-400">
+                <section className="flex flex-col">
+                <h2 className="text-xl font-bold mb-4 text-red-700">
+                  Sign out 
+                </h2>
                 <button
-                  type="submit"
-                  className="p-2 bg-red-600 rounded text-white font-bold hover:bg-red-700"
-                >
-                  Subscribe
+                  onClick={handleSignOut}
+                  className="p-2 bg-red-600 rounded text-white font-bold mb-4 hover:bg-red-700"
+                  >
+                  Sign Out
                 </button>
-              </form>
-            </div>
-}
+                </section>
+                <h2 className="text-xl font-bold mb-4 text-red-700">
+                  Admin Panel
+                </h2>
+                <p className="mb-4">
+                  Manage your platform efficiently with access to all
+                  administrative tools and resources.
+                </p>
+
+                <h2 className="text-xl font-bold mb-4 text-red-700">
+                  Subscribe for Alerts
+                </h2>
+                <form className="flex flex-col space-y-2">
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    id="admin-email"
+                    className="p-2 rounded bg-gray-700 text-white"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    className="p-2 bg-red-600 rounded text-white font-bold hover:bg-red-700"
+                  >
+                    Subscribe
+                  </button>
+                </form>
+              </div>
+            )}
           </div>
         </SidebarBody>
       </Sidebar>
