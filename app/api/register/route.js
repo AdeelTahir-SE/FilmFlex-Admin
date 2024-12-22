@@ -5,7 +5,6 @@ import { createAdminTable } from "@/DB/Admin";
 export async function POST(request) {
   console.log("Request received");
 
-  // Parsing form data from the request
   const formData = await request.formData();
   const { name, email, password } = Object.fromEntries(formData);
 
@@ -23,10 +22,7 @@ export async function POST(request) {
       return NextResponse.json({ message: "Admin with this email already exists." }, { status: 400 });
     }
 
-    // Create the admin table if it doesn't exist
-    await createAdminTable();
     
-    // Create a new admin with hashed password
     await createAdmin(name, email, password, "Manager");
 
     // Create a successful response with a cookie
