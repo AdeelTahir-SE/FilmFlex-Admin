@@ -3,6 +3,7 @@ import React, { useState } from "react";
 //import reserve related icon from lucide-react
 import { TicketCheck } from "lucide-react";
 import { Sidebar, SidebarBody, SidebarLink } from "./sidebar";
+import { DeleteIcon } from "lucide-react";
 import {
   LayoutDashboardIcon,
   Settings,
@@ -19,6 +20,7 @@ export function SidebarApp({ children }) {
     { label: "Users", href: "/Users", icon: <UserIcon /> },
     { label: "Settings", href: "/Settings", icon: <Settings /> },
     { label: "Reservations", href: "/ReservedMovies", icon: <TicketCheck /> },
+    { label: "Delete Movie", href: "/deleteMovie", icon: <DeleteIcon /> },
   ];
 
   const [open, setOpen] = useState(false);
@@ -76,24 +78,8 @@ export function SidebarApp({ children }) {
                   administrative tools and resources.
                 </p>
 
-                <h2 className="text-xl font-bold mb-4 text-red-700">
-                  Subscribe for Alerts
-                </h2>
-                <form className="flex flex-col space-y-2">
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    id="admin-email"
-                    className="p-2 rounded bg-gray-700 text-white"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="p-2 bg-red-600 rounded text-white font-bold hover:bg-red-700"
-                  >
-                    Subscribe
-                  </button>
-                </form>
+                
+                
               </div>
             )}
           </div>

@@ -62,7 +62,7 @@ SELECT * FROM Movie INNER JOIN MovieImage ON Movie.movieId=MovieImage.movieId;
 }
 export async function deleteMovie(movieId){
   const query = `
-      DELETE FROM movie WHERE movieId = ?
+      DELETE FROM Movie WHERE movieId = ?
   `;
   const values = [movieId];
 

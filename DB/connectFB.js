@@ -3,8 +3,8 @@ import {
   initializeFirestore,
   doc,
 setDoc,
-  updateDoc,
-  collection,
+deleteDoc,
+collection,
   where,
   onSnapshot,
   getDocs,
@@ -87,11 +87,7 @@ export const getReservedMovies = async () => {
 
               // Extract userId from the seat document
               const userId = seatData.userId;
-            console.log("userId",userId)
-            console.log("seatId",seatId)
-            console.log("day",day)
-            console.log("time",time)
-            console.log("movieId",movieId)
+
               // Push the movie data with userId, seatId, day, and time
               userMovies.push({ movieId, userId, seatId, day, time });
             });
@@ -110,6 +106,7 @@ export const getReservedMovies = async () => {
 
 
 // Function to fetch movies and check for reserved seats
+// Function to fetch movies and check for reserved seats
 export const fetchMoviesWithSeatStatus = async () => {
   try {
     const moviesRef = collection(db, "movies");
@@ -125,6 +122,8 @@ export const fetchMoviesWithSeatStatus = async () => {
       const daysSnapshot = await getDocs(daysRef);
       const days = [];
 
+      let hasReservedSeatsForMovie = false; // Flag to track if the movie has reserved seats
+
       // Check each day's timings and seat reservations
       for (const dayDoc of daysSnapshot.docs) {
         const dayData = dayDoc.data();
@@ -132,35 +131,39 @@ export const fetchMoviesWithSeatStatus = async () => {
         const timingsSnapshot = await getDocs(timingsRef);
 
         const timings = [];
+        
         for (const timingDoc of timingsSnapshot.docs) {
           const timingData = timingDoc.data();
           const seatsRef = collection(timingDoc.ref, "seats");
           const seatsSnapshot = await getDocs(seatsRef);
-
+          console.log(seatsSnapshot);
           const seats = [];
           let hasReservedSeats = false;
 
           for (const seatDoc of seatsSnapshot.docs) {
             const seatData = seatDoc.data();
-            seats.push(seatData);
 
-            // Check if any seat is reserved
-            if (seatData.status === "Reserved") {
+            if (seatData.userId != null) {
               hasReservedSeats = true;
             }
           }
 
           timings.push({ ...timingData, seats, hasReservedSeats });
+          
+          if (hasReservedSeats) {
+            hasReservedSeatsForMovie = true; // Set flag to true if any seat is reserved for this movie
+          }
         }
 
         days.push({ ...dayData, timings });
       }
 
-      movieList.push({
-        id: movieId,
-        name: movieData.name,
-        days,
-      });
+      if (hasReservedSeatsForMovie) {
+      
+        movieList.push({
+          id: movieId,
+        });
+      }
     }
 
     return movieList;

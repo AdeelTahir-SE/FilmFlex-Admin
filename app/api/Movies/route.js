@@ -177,7 +177,8 @@ export async function POST(request) {
 
   export async function DELETE(request){
 
-    const {movieId} = request.json();
+    const {movieId} = await request.json();
+    console.log(movieId)
     if (!movieId) {
       return new Response(
         JSON.stringify({ success: false, error: "Missing movie ID" }),

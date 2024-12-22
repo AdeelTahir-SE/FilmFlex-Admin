@@ -17,6 +17,7 @@ const UsersPage = () => {
           throw new Error('Failed to fetch users');
         }
         const data = await response.json();
+        console.log(data)
         setUsers(data);
         setFilteredUsers(data);
       } catch (err) {
@@ -91,7 +92,7 @@ const UsersPage = () => {
             <tr key={user.id} className="bg-gray-800 text-white">
               <td className="border border-gray-700 px-4 py-2">
                 <img 
-                  src={user.imageUrl} 
+                  src={user.profilePicUrl} 
                   alt={user.name} 
                   className="w-16 h-16 object-cover rounded-full border border-gray-700" 
                 />
